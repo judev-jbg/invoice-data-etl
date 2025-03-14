@@ -17,7 +17,7 @@ PEDIDOS_DIR = os.path.join(DATA_DIR, 'pedidos')
 
 # Output directory
 OUTPUT_DIR = "I:\\Mi unidad\\Facturas JSON"
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'facturas.json')
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'referencia_placeholder.json')
 
 # Column names for final dataframe
 COLUMNS_FINAL = [

@@ -85,18 +85,18 @@ def main():
     
     # Transform data
     logger.info("Transforming data to dictionary structure")
-    dict_invoice = transform(df_merged_full)
+    data = transform(df_merged_full)
     
-    if dict_invoice is None or not dict_invoice.get('facturas'):
+    if data is None or len(data) == 0:
         logger.error("ETL process failed: Error transforming data")
         return
         
     # Load data
     logger.info("Loading data to JSON file")
-    success = load(dict_invoice, OUTPUT_FILE)
+    success = load(data, OUTPUT_FILE)
     
     if success:
-        invoice_count = len(dict_invoice['facturas'])
+        invoice_count = len(data)
         execution_time = time.time() - start_time
         logger.info(f"ETL process completed successfully in {execution_time:.2f} seconds")
         logger.info(f"Processed {invoice_count} invoices")

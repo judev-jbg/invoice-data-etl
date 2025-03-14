@@ -65,6 +65,12 @@ def extract(directory_path, prefix):
         if "Id Pedido" in df.columns and "NumPedido" in df.columns and "Serie" in df.columns:
             logger.debug("Filtering by Serie = 0")
             df = df[df['Serie'] == 0]
+            df['Pedido Cliente'] = df.apply(
+                lambda row: row['Observaciones'] if (row['Pedido Cliente'] == "" and row['Observaciones'] != "") 
+                                                else row['Pedido Cliente'],
+                axis=1
+            )
+
         
         # Normalize column headers
         df.columns = [normalize_header(col, prefix) for col in df.columns]

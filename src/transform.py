@@ -19,21 +19,23 @@ def transform(df):
     """
     try:
         logger.info("Starting transformation process")
-        
-        # Initialize the invoice dictionary
-        dict_invoice = {"facturas": []}
+                
+        invoices = []
         
         # Get unique invoice IDs
         facturas_unicas = df['ft_id_factura'].unique()
         logger.info(f"Found {len(facturas_unicas)} unique invoices to process")
         
+        referencia_pedido = "" 
         # Process each invoice
         for id_factura in facturas_unicas:
             # Filter dataframe to get only rows for this invoice
             filas_factura = df[df['ft_id_factura'] == id_factura]
+            dict_invoice = {}
             
             # Take common data from the first row (same for all rows of the same invoice)
             primera_fila = filas_factura.iloc[0]
+            referencia_pedido = convert_to_native_type(primera_fila['pd_pedido_cliente']) or 'id_factura_' + str(convert_to_native_type(primera_fila['ft_id_factura']))
             
             # Create the basic invoice structure
             factura_estructura = {
@@ -75,14 +77,17 @@ def transform(df):
                     "total": convert_to_native_type(fila['lpd_total'])
                 }
              })
+                
             # Add invoice to the result
-            # factura_id = f"factura_{id_factura}"
-            dict_invoice["facturas"].append({"factura": factura_estructura})
-            
+            dict_invoice["reference_invoice"] = referencia_pedido
+            dict_invoice["factura"] = factura_estructura
+
+            invoices.append(dict_invoice)
+
             logger.debug(f"Processed invoice {id_factura} with {len(filas_factura)} products")
 
-        logger.info(f"Transformation successful: converted dataframe to dictionary with {len(dict_invoice['facturas'])} invoices")
-        return dict_invoice
+        logger.info(f"Transformation successful: converted dataframe to dictionary with {len(invoices)} invoices")
+        return invoices
     
     except Exception as e:
         logger.error(f"Error during transformation: {str(e)}", exc_info=True)
